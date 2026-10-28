@@ -343,12 +343,18 @@ public partial class Form1 : Form
 
     private void BuildAdapterMenu()
     {
-        foreach (ToolStripItem item in adaptersMenuItem.DropDownItems)
+        // Dispose removes items from their owner collection, so never enumerate
+        // DropDownItems while disposing its live entries.
+        ToolStripItem[] previousItems = adaptersMenuItem.DropDownItems
+            .Cast<ToolStripItem>()
+            .ToArray();
+
+        adaptersMenuItem.DropDownItems.Clear();
+
+        foreach (ToolStripItem item in previousItems)
         {
             item.Dispose();
         }
-
-        adaptersMenuItem.DropDownItems.Clear();
 
         if (_adapters.Count == 0)
         {
