@@ -117,8 +117,6 @@ public partial class Form1 : Form
         adaptersMenuItem.DropDown.BackColor = MenuBackground;
         adaptersMenuItem.DropDown.ForeColor = MenuForeground;
         adaptersMenuItem.DropDown.Padding = new Padding(5);
-        adaptersMenuItem.DropDown.ShowImageMargin = false;
-        adaptersMenuItem.DropDown.ShowCheckMargin = true;
 
         foreach (ToolStripItem item in contextMenuStrip1.Items)
         {
