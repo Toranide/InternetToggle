@@ -161,7 +161,6 @@ public partial class Form1 : Form
         public override Color MenuItemBorder => Color.FromArgb(49, 112, 171);
         public override Color MenuItemSelected => Color.FromArgb(24, 59, 95);
         public override Color MenuItemSelectedGradientBegin => Color.FromArgb(24, 59, 95);
-        public override Color MenuItemSelectedGradientMiddle => Color.FromArgb(24, 59, 95);
         public override Color MenuItemSelectedGradientEnd => Color.FromArgb(24, 59, 95);
         public override Color MenuItemPressedGradientBegin => Color.FromArgb(29, 70, 111);
         public override Color MenuItemPressedGradientMiddle => Color.FromArgb(29, 70, 111);
