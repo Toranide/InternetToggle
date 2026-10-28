@@ -1,3 +1,4 @@
+using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 
@@ -28,7 +29,6 @@ internal sealed class TrayPopupForm : Form
     private readonly string? _selectedAdapterName;
     private readonly bool _adapterQueryFailed;
     private readonly bool _isBusy;
-    private readonly bool _startupEnabled;
     private readonly Func<bool, Task> _setAdapterEnabledAsync;
     private readonly Func<string, Task> _selectAdapterAsync;
     private readonly Func<Task> _toggleStartupAsync;
@@ -52,8 +52,6 @@ internal sealed class TrayPopupForm : Form
     private readonly TraySeparator _separatorTwo;
     private readonly Panel _adapterListPanel;
 
-    private bool _showingAdapters;
-
     public TrayPopupForm(
         IReadOnlyList<TrayAdapterItem> adapters,
         string? selectedAdapterName,
@@ -70,7 +68,6 @@ internal sealed class TrayPopupForm : Form
         _selectedAdapterName = selectedAdapterName;
         _adapterQueryFailed = adapterQueryFailed;
         _isBusy = isBusy;
-        _startupEnabled = startupEnabled;
         _setAdapterEnabledAsync = setAdapterEnabledAsync;
         _selectAdapterAsync = selectAdapterAsync;
         _toggleStartupAsync = toggleStartupAsync;
@@ -396,7 +393,6 @@ internal sealed class TrayPopupForm : Form
 
     private void ShowAdaptersView()
     {
-        _showingAdapters = true;
         _brandInternet.Visible = false;
         _brandToggle.Visible = false;
         _versionLabel.Visible = false;
@@ -419,7 +415,6 @@ internal sealed class TrayPopupForm : Form
 
     private void ShowMainView()
     {
-        _showingAdapters = false;
         _brandInternet.Visible = true;
         _brandToggle.Visible = true;
         _versionLabel.Visible = true;
