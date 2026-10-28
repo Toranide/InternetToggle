@@ -49,6 +49,15 @@ To publish a self-contained, single-file build for 64-bit Windows:
 
 Run the generated InternetToggle.exe from the publish folder. Build outputs are ignored by Git and should not be committed to the repository.
 
+## GitHub Actions and releases
+
+Pushes and pull requests build the project and attach a downloadable InternetToggle-win-x64 artifact to the workflow run. To create a versioned GitHub Release with the ready-to-run executable, push a version tag after confirming the build works:
+
+    git tag v1.0.0
+    git push origin v1.0.0
+
+The release workflow builds the self-contained 64-bit Windows executable and attaches it to the new GitHub Release.
+
 ## License
 
-Released under the MIT License. See [LICENSE](LICENSE).
+Released under the MIT License. See LICENSE.
