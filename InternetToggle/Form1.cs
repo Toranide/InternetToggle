@@ -30,6 +30,8 @@ public partial class Form1 : Form
     private bool _hotkeyRegistered;
     private bool _isBusy;
     private bool _adapterQueryFailed;
+    private TrayPopupForm? _trayPopup;
+    private bool _showingTrayPopup;
 
     [DllImport("user32.dll", SetLastError = true)]
     private static extern bool RegisterHotKey(IntPtr hWnd, int id, int fsModifiers, int vk);
@@ -49,23 +51,17 @@ public partial class Form1 : Form
             Interval = 15_000
         };
 
-        ConfigureTrayMenuAppearance();
+        notifyIcon1.ContextMenuStrip = null;
         LoadSettings();
 
         notifyIcon1.DoubleClick += async (_, _) => await ToggleSelectedAdapterAsync();
-        enableMenuItem.Click += async (_, _) => await SetSelectedAdapterEnabledAsync(true);
-        disableMenuItem.Click += async (_, _) => await SetSelectedAdapterEnabledAsync(false);
-        adaptersMenuItem.DropDownOpening += async (_, _) =>
+        notifyIcon1.MouseUp += async (_, e) =>
         {
-            await RefreshAdaptersAsync(showErrors: false);
-            BuildAdapterMenu();
+            if (e.Button == MouseButtons.Right)
+            {
+                await ShowTrayPopupAsync();
+            }
         };
-        startupMenuItem.Click += async (_, _) => await ToggleStartupAsync();
-        aboutMenuItem.Click += (_, _) => ShowAbout();
-        exitMenuItem.Click += (_, _) => Close();
-
-        contextMenuStrip1.Opening += async (_, _) =>
-            await RefreshAdaptersAsync(showErrors: false);
 
         _refreshTimer.Tick += async (_, _) =>
             await RefreshAdaptersAsync(showErrors: false);
@@ -73,6 +69,8 @@ public partial class Form1 : Form
         FormClosing += (_, _) =>
         {
             _refreshTimer.Stop();
+            _trayPopup?.Close();
+            _trayPopup = null;
 
             if (_hotkeyRegistered)
             {
@@ -93,98 +91,71 @@ public partial class Form1 : Form
         UpdatePresentation();
     }
 
-    private static readonly Color MenuBackground = Color.FromArgb(11, 23, 39);
-    private static readonly Color MenuForeground = Color.FromArgb(232, 242, 255);
     private static readonly Color MenuMuted = Color.FromArgb(139, 166, 197);
-    private static readonly Color MenuAccent = Color.FromArgb(77, 189, 255);
     private static readonly Color MenuSuccess = Color.FromArgb(66, 220, 160);
     private static readonly Color MenuWarning = Color.FromArgb(255, 190, 104);
-    private static readonly Font TrayMenuFont = new("Segoe UI", 9.5F, FontStyle.Regular);
-    private static readonly Font TrayMenuBoldFont = new("Segoe UI", 9.5F, FontStyle.Bold);
 
-    private void ConfigureTrayMenuAppearance()
+    private async Task ShowTrayPopupAsync()
     {
-        var renderer = new TrayMenuRenderer();
-
-        contextMenuStrip1.Renderer = renderer;
-        adaptersMenuItem.DropDown.Renderer = renderer;
-        contextMenuStrip1.BackColor = MenuBackground;
-        contextMenuStrip1.ForeColor = MenuForeground;
-        contextMenuStrip1.Padding = new Padding(5);
-        contextMenuStrip1.ShowImageMargin = false;
-        contextMenuStrip1.ShowCheckMargin = true;
-
-        adaptersMenuItem.DropDown.BackColor = MenuBackground;
-        adaptersMenuItem.DropDown.ForeColor = MenuForeground;
-        adaptersMenuItem.DropDown.Padding = new Padding(5);
-
-        foreach (ToolStripItem item in contextMenuStrip1.Items)
+        if (_showingTrayPopup)
         {
-            if (item is ToolStripSeparator separator)
+            return;
+        }
+
+        if (_trayPopup is { IsDisposed: false })
+        {
+            _trayPopup.Activate();
+            return;
+        }
+
+        _showingTrayPopup = true;
+
+        try
+        {
+            await RefreshAdaptersAsync(showErrors: false);
+            await RefreshStartupStateAsync();
+
+            TrayAdapterItem[] adapters = _adapters
+                .Select(adapter => new TrayAdapterItem(
+                    adapter.Name,
+                    adapter.Description,
+                    adapter.IsEnabled,
+                    string.Equals(
+                        adapter.Name,
+                        _selectedAdapterName,
+                        StringComparison.OrdinalIgnoreCase)))
+                .ToArray();
+
+            var popup = new TrayPopupForm(
+                adapters,
+                _selectedAdapterName,
+                _adapterQueryFailed,
+                _isBusy,
+                startupMenuItem.Checked,
+                SetSelectedAdapterEnabledAsync,
+                async adapterName =>
+                {
+                    SelectAdapter(adapterName);
+                    await RefreshAdaptersAsync(showErrors: false);
+                },
+                ToggleStartupAsync,
+                ShowAbout,
+                Close);
+
+            _trayPopup = popup;
+            popup.FormClosed += (_, _) =>
             {
-                separator.Margin = new Padding(8, 4, 8, 4);
-                separator.Size = new Size(280, 1);
-                continue;
-            }
+                if (ReferenceEquals(_trayPopup, popup))
+                {
+                    _trayPopup = null;
+                }
+            };
 
-            StyleMenuItem(item);
-
-            if (item == statusMenuItem)
-            {
-                item.Font = TrayMenuBoldFont;
-                item.Size = new Size(310, 38);
-            }
+            popup.ShowAt(Cursor.Position);
         }
-    }
-
-    private static void StyleMenuItem(ToolStripItem item)
-    {
-        item.BackColor = MenuBackground;
-        item.ForeColor = MenuForeground;
-        item.Font = TrayMenuFont;
-        item.Margin = new Padding(2, 1, 2, 1);
-        item.Padding = new Padding(10, 5, 10, 5);
-
-        if (item is ToolStripMenuItem menuItem)
+        finally
         {
-            menuItem.AutoSize = false;
-            menuItem.Size = new Size(310, 36);
-        }
-    }
-
-    private sealed class TrayMenuColorTable : ProfessionalColorTable
-    {
-        public override Color ToolStripDropDownBackground => MenuBackground;
-        public override Color MenuBorder => Color.FromArgb(47, 76, 108);
-        public override Color MenuItemBorder => Color.FromArgb(49, 112, 171);
-        public override Color MenuItemSelected => Color.FromArgb(24, 59, 95);
-        public override Color MenuItemSelectedGradientBegin => Color.FromArgb(24, 59, 95);
-        public override Color MenuItemSelectedGradientEnd => Color.FromArgb(24, 59, 95);
-        public override Color MenuItemPressedGradientBegin => Color.FromArgb(29, 70, 111);
-        public override Color MenuItemPressedGradientMiddle => Color.FromArgb(29, 70, 111);
-        public override Color MenuItemPressedGradientEnd => Color.FromArgb(29, 70, 111);
-        public override Color ImageMarginGradientBegin => MenuBackground;
-        public override Color ImageMarginGradientMiddle => MenuBackground;
-        public override Color ImageMarginGradientEnd => MenuBackground;
-        public override Color SeparatorDark => Color.FromArgb(43, 66, 90);
-        public override Color SeparatorLight => Color.FromArgb(43, 66, 90);
-        public override Color ToolStripBorder => Color.FromArgb(47, 76, 108);
-        public override Color ToolStripGradientBegin => MenuBackground;
-        public override Color ToolStripGradientMiddle => MenuBackground;
-        public override Color ToolStripGradientEnd => MenuBackground;
-    }
-
-    private sealed class TrayMenuRenderer : ToolStripProfessionalRenderer
-    {
-        public TrayMenuRenderer() : base(new TrayMenuColorTable())
-        {
-            RoundedEdges = true;
-        }
-
-        protected override void OnRenderItemText(ToolStripItemTextRenderEventArgs e)
-        {
-            e.TextColor = e.Item.ForeColor;
-            base.OnRenderItemText(e);
+            _showingTrayPopup = false;
         }
     }
 
@@ -464,59 +435,11 @@ public partial class Form1 : Form
         }
     }
 
-    private void BuildAdapterMenu()
-    {
-        // Dispose removes items from their owner collection, so never enumerate
-        // DropDownItems while disposing its live entries.
-        ToolStripItem[] previousItems = adaptersMenuItem.DropDownItems
-            .Cast<ToolStripItem>()
-            .ToArray();
-
-        adaptersMenuItem.DropDownItems.Clear();
-
-        foreach (ToolStripItem item in previousItems)
-        {
-            item.Dispose();
-        }
-
-        if (_adapters.Count == 0)
-        {
-            adaptersMenuItem.DropDownItems.Add(new ToolStripMenuItem(
-                _adapterQueryFailed ? "Could not load adapters" : "No network adapters found")
-            {
-                Enabled = false
-            });
-            return;
-        }
-
-        foreach (NetworkAdapterInfo adapter in _adapters)
-        {
-            string state = adapter.IsEnabled ? "enabled" : "disabled";
-            string adapterName = adapter.Name;
-
-            var item = new ToolStripMenuItem($"{adapter.Name}  ·  {state}")
-            {
-                Checked = string.Equals(
-                    adapterName,
-                    _selectedAdapterName,
-                    StringComparison.OrdinalIgnoreCase),
-                CheckOnClick = false,
-                ToolTipText = adapter.Description
-            };
-
-            StyleMenuItem(item);
-            item.Size = new Size(295, 36);
-            item.Click += (_, _) => SelectAdapter(adapterName);
-            adaptersMenuItem.DropDownItems.Add(item);
-        }
-    }
-
     private void SelectAdapter(string adapterName)
     {
         _selectedAdapterName = adapterName;
         SaveSettings();
         UpdatePresentation();
-        BuildAdapterMenu();
 
         notifyIcon1.ShowBalloonTip(
             1800,
