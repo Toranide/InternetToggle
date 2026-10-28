@@ -9,7 +9,7 @@ All notable changes to InternetToggle are documented here.
 - Remember the chosen adapter in the current Windows user's AppData folder.
 - Toggle the selected adapter with the global shortcut \`Ctrl + Alt + T\`.
 - Separate enable and disable commands that reflect the adapter's current state.
-- A dark, high-contrast tray menu with clearer status and selection styling.
+- A custom borderless dark tray popup with rounded corners, vector-drawn icons, adapter selection, and clearer enable/disable actions.
 - Opt-in startup task management from the tray menu.
 - Tray status and balloon notifications for adapter operations.
 - Project cover artwork, README, usage guide, contribution guide, changelog, MIT license, and Windows/.NET 10 build/release workflow.
