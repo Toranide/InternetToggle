@@ -6,7 +6,8 @@ namespace InternetToggle
         private System.Windows.Forms.NotifyIcon notifyIcon1;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem statusMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem toggleMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem enableMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem disableMenuItem;
         private System.Windows.Forms.ToolStripMenuItem adaptersMenuItem;
         private System.Windows.Forms.ToolStripMenuItem startupMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aboutMenuItem;
@@ -28,7 +29,8 @@ namespace InternetToggle
             notifyIcon1 = new System.Windows.Forms.NotifyIcon(components);
             contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(components);
             statusMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            toggleMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            enableMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            disableMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             adaptersMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             startupMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             aboutMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -38,41 +40,49 @@ namespace InternetToggle
             {
                 statusMenuItem,
                 new System.Windows.Forms.ToolStripSeparator(),
-                toggleMenuItem,
+                disableMenuItem,
+                enableMenuItem,
+                new System.Windows.Forms.ToolStripSeparator(),
                 adaptersMenuItem,
                 startupMenuItem,
                 aboutMenuItem,
                 new System.Windows.Forms.ToolStripSeparator(),
                 exitMenuItem
             });
+
             contextMenuStrip1.Name = "contextMenuStrip1";
             contextMenuStrip1.ShowImageMargin = false;
-            contextMenuStrip1.Size = new System.Drawing.Size(250, 180);
+            contextMenuStrip1.ShowCheckMargin = true;
+            contextMenuStrip1.Size = new System.Drawing.Size(330, 300);
 
             statusMenuItem.Enabled = false;
             statusMenuItem.Name = "statusMenuItem";
-            statusMenuItem.Size = new System.Drawing.Size(249, 22);
-            statusMenuItem.Text = "Network adapter status: loading";
+            statusMenuItem.Size = new System.Drawing.Size(310, 38);
+            statusMenuItem.Text = "●  NETWORK STATUS  ·  LOADING";
 
-            toggleMenuItem.Name = "toggleMenuItem";
-            toggleMenuItem.Size = new System.Drawing.Size(249, 22);
-            toggleMenuItem.Text = "Toggle selected adapter (Ctrl+Alt+T)";
+            enableMenuItem.Name = "enableMenuItem";
+            enableMenuItem.Size = new System.Drawing.Size(310, 36);
+            enableMenuItem.Text = "✓  Enable selected adapter";
+
+            disableMenuItem.Name = "disableMenuItem";
+            disableMenuItem.Size = new System.Drawing.Size(310, 36);
+            disableMenuItem.Text = "⊘  Disable selected adapter";
 
             adaptersMenuItem.Name = "adaptersMenuItem";
-            adaptersMenuItem.Size = new System.Drawing.Size(249, 22);
-            adaptersMenuItem.Text = "Select network adapter";
+            adaptersMenuItem.Size = new System.Drawing.Size(310, 36);
+            adaptersMenuItem.Text = "⌁  Select network adapter";
 
             startupMenuItem.Name = "startupMenuItem";
-            startupMenuItem.Size = new System.Drawing.Size(249, 22);
-            startupMenuItem.Text = "Run at Windows sign-in";
+            startupMenuItem.Size = new System.Drawing.Size(310, 36);
+            startupMenuItem.Text = "⚙  Run at Windows sign-in";
 
             aboutMenuItem.Name = "aboutMenuItem";
-            aboutMenuItem.Size = new System.Drawing.Size(249, 22);
-            aboutMenuItem.Text = "About InternetToggle";
+            aboutMenuItem.Size = new System.Drawing.Size(310, 36);
+            aboutMenuItem.Text = "ⓘ  About InternetToggle";
 
             exitMenuItem.Name = "exitMenuItem";
-            exitMenuItem.Size = new System.Drawing.Size(249, 22);
-            exitMenuItem.Text = "Exit";
+            exitMenuItem.Size = new System.Drawing.Size(310, 36);
+            exitMenuItem.Text = "⏻  Exit";
 
             notifyIcon1.ContextMenuStrip = contextMenuStrip1;
             notifyIcon1.Icon = System.Drawing.SystemIcons.Application;
