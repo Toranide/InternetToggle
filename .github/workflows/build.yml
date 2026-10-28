@@ -61,4 +61,4 @@ jobs:
       - name: Publish GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "$env:GITHUB_REF_NAME" "artifacts/win-x64/InternetToggle.exe" --title "$env:GITHUB_REF_NAME" --generate-notes
+        run: gh release create "$env:GITHUB_REF_NAME" "artifacts/win-x64/InternetToggle.exe" --repo "$env:GITHUB_REPOSITORY" --title "$env:GITHUB_REF_NAME" --generate-notes
