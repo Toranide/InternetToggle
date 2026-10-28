@@ -752,7 +752,7 @@ public partial class Form1 : Form
     {
         MessageBox.Show(
             this,
-            "InternetToggle is a small Windows system-tray utility for quickly enabling or " +
+            "InternetToggle 1.0.0 is a small Windows system-tray utility for quickly enabling or " +
             "disabling a selected network adapter.\n\n" +
             "Hotkey: Ctrl+Alt+T\n\n" +
             "Important: this changes the selected adapter's administrative state. Another " +
