@@ -548,7 +548,8 @@ internal sealed class TrayActionButton : Control
             ControlStyles.AllPaintingInWmPaint |
             ControlStyles.OptimizedDoubleBuffer |
             ControlStyles.ResizeRedraw |
-            ControlStyles.Selectable,
+            ControlStyles.Selectable |
+            ControlStyles.SupportsTransparentBackColor,
             true);
 
         BackColor = Color.Transparent;
