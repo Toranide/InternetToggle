@@ -1,6 +1,6 @@
 # InternetToggle
 
-![InternetToggle cover](docs/internet-toggle-cover.svg)
+![InternetToggle cover](docs/internet-toggle-cover.jpg)
 
 **A lightweight Windows system-tray utility for quickly enabling or disabling a selected network adapter.**
 
