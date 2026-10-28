@@ -9,6 +9,9 @@
     <Version>1.0.0</Version>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <FileVersion>1.0.0.0</FileVersion>
+    <InformationalVersion>1.0.0</InformationalVersion>
+    <Product>InternetToggle</Product>
+    <RepositoryUrl>https://github.com/Toranide/InternetToggle</RepositoryUrl>
     <Description>A lightweight Windows system-tray utility for toggling a selected network adapter.</Description>
     <Authors>Toranide</Authors>
   </PropertyGroup>
