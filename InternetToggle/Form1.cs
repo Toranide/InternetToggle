@@ -46,7 +46,7 @@ public partial class Form1 : Form
     {
         InitializeComponent();
 
-        _refreshTimer = new System.Windows.Forms.Timer(components)
+        _refreshTimer = new System.Windows.Forms.Timer(components!)
         {
             Interval = 15_000
         };
