@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
@@ -532,13 +533,21 @@ internal sealed class TrayActionButton : Control
 
     private bool _hovered;
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public new string Text { get; set; } = string.Empty;
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public string Subtitle { get; set; } = string.Empty;
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public string Shortcut { get; set; } = string.Empty;
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public TrayActionKind Kind { get; set; }
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public Color Accent { get; set; } = Color.FromArgb(76, 189, 255);
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public bool ShowSwitch { get; set; }
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public bool IsToggled { get; set; }
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public bool IsSelectedRow { get; set; }
 
     public TrayActionButton()
@@ -806,8 +815,11 @@ internal sealed class AdapterStatusCard : Control
     private static readonly Font NameFont = new("Segoe UI", 10F, FontStyle.Bold);
     private static readonly Font StateFont = new("Segoe UI", 7.2F, FontStyle.Bold);
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public string AdapterName { get; set; } = "Loading network adapters";
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public string StateText { get; set; } = "CHECKING STATUS";
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public Color StateColor { get; set; } = Color.FromArgb(76, 189, 255);
 
     public AdapterStatusCard()
