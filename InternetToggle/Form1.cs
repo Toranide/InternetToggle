@@ -270,18 +270,21 @@ public partial class Form1 : Form
         {
             string verb = shouldEnable ? "Enable-NetAdapter" : "Disable-NetAdapter";
             string adapterName = ToPowerShellString(adapter.Name);
-            string script = $"""
-                $ErrorActionPreference = 'Stop'
-                try {
-                    {{verb}} -Name {{adapterName}} -Confirm:$false -ErrorAction Stop | Out-Null
-                    Write-Output 'OK'
-                    exit 0
-                }
-                catch {
-                    [Console]::Error.WriteLine($_.Exception.Message)
-                    exit 1
-                }
-                """;
+            string script = string.Join(
+                Environment.NewLine,
+                new[]
+                {
+                    "$ErrorActionPreference = 'Stop'",
+                    "try {",
+                    $"    {verb} -Name {adapterName} -Confirm:$false -ErrorAction Stop | Out-Null",
+                    "    Write-Output 'OK'",
+                    "    exit 0",
+                    "}",
+                    "catch {",
+                    "    [Console]::Error.WriteLine($_.Exception.Message)",
+                    "    exit 1",
+                    "}"
+                });
 
             ProcessResult result = await RunPowerShellAsync(script, TimeSpan.FromSeconds(25));
 
