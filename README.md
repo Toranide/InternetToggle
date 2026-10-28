@@ -73,7 +73,7 @@ git tag v1.0.0
 git push origin v1.0.0
 \`\`\`
 
-See [CHANGELOG.md](CHANGELOG.md) for changes.
+See [CHANGELOG.md](CHANGELOG.md) for changes and the [v1.0.0 draft release notes](docs/releases/v1.0.0.md).
 
 ## Contributing
 
