@@ -39,11 +39,11 @@ namespace InternetToggle
             contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[]
             {
                 statusMenuItem,
+                adaptersMenuItem,
                 new System.Windows.Forms.ToolStripSeparator(),
                 disableMenuItem,
                 enableMenuItem,
                 new System.Windows.Forms.ToolStripSeparator(),
-                adaptersMenuItem,
                 startupMenuItem,
                 aboutMenuItem,
                 new System.Windows.Forms.ToolStripSeparator(),
