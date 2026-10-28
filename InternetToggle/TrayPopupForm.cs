@@ -621,12 +621,20 @@ internal sealed class TrayActionButton : Control
             return;
         }
 
+        int rightReserve = !string.IsNullOrWhiteSpace(Shortcut)
+            ? 120
+            : ShowSwitch
+                ? 58
+                : IsSelectedRow
+                    ? 42
+                    : 22;
+
         if (!string.IsNullOrEmpty(Subtitle))
         {
             DrawText(
                 graphics,
                 Text,
-                new Rectangle(left, 5, Math.Max(20, Width - left - 100), 18),
+                new Rectangle(left, 5, Math.Max(20, Width - left - rightReserve), 18),
                 TitleFont,
                 Enabled ? TextColor : MutedColor,
                 TextFormatFlags.Left | TextFormatFlags.VerticalCenter | TextFormatFlags.EndEllipsis);
@@ -634,7 +642,7 @@ internal sealed class TrayActionButton : Control
             DrawText(
                 graphics,
                 Subtitle,
-                new Rectangle(left, 23, Math.Max(20, Width - left - 22), 15),
+                new Rectangle(left, 23, Math.Max(20, Width - left - rightReserve), 15),
                 SubtitleFont,
                 MutedColor,
                 TextFormatFlags.Left | TextFormatFlags.VerticalCenter | TextFormatFlags.EndEllipsis);
@@ -644,7 +652,7 @@ internal sealed class TrayActionButton : Control
             DrawText(
                 graphics,
                 Text,
-                new Rectangle(left, 0, Math.Max(20, Width - left - 70), Height),
+                new Rectangle(left, 0, Math.Max(20, Width - left - rightReserve), Height),
                 TitleFont,
                 Enabled ? TextColor : MutedColor,
                 TextFormatFlags.Left | TextFormatFlags.VerticalCenter | TextFormatFlags.EndEllipsis);
@@ -844,7 +852,7 @@ internal sealed class AdapterStatusCard : Control
             g,
             AdapterName,
             NameFont,
-            new Rectangle(30, 25, 205, 25),
+            new Rectangle(30, 25, Math.Max(40, Width - 145), 25),
             TextColor,
             TextFormatFlags.Left | TextFormatFlags.VerticalCenter | TextFormatFlags.EndEllipsis);
 
