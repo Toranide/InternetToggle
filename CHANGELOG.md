@@ -8,16 +8,20 @@ All notable changes to InternetToggle are documented here.
 - Select a detected network adapter from the system-tray menu.
 - Remember the chosen adapter in the current Windows user's AppData folder.
 - Toggle the selected adapter with the global shortcut \`Ctrl + Alt + T\`.
+- Separate enable and disable commands that reflect the adapter's current state.
+- A dark, high-contrast tray menu with clearer status and selection styling.
 - Opt-in startup task management from the tray menu.
 - Tray status and balloon notifications for adapter operations.
-- README, MIT license, usage guidance, and a Windows/.NET 10 GitHub Actions workflow.
+- Project cover artwork, README, usage guide, contribution guide, changelog, MIT license, and Windows/.NET 10 build/release workflow.
 
 ### Changed
 - Move administrator elevation to application startup, before creating the form.
 - Use Windows PowerShell's \`Get-NetAdapter\`, \`Enable-NetAdapter\`, and \`Disable-NetAdapter\` for adapter state and toggle operations.
 - Add command timeouts and clearer error messages.
 - Avoid disposing the live tray-menu collection while enumerating it.
+- Replace the generated SVG cover in the README with the original uploaded JPEG project poster.
 
 ### Notes
 - InternetToggle enables or disables one network adapter; it is not a firewall and does not guarantee all applications are disconnected from the internet.
-- This version has not yet been validated by a successful GitHub-hosted build in the current environment.
+- The displayed state reports whether Windows considers the adapter administratively enabled; it does not verify that internet access is available.
+- The current code and interface changes still require a successful build and smoke test on Windows before declaring the release validated.
