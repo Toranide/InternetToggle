@@ -14,6 +14,7 @@ InternetToggle was made for workflows where you need to cut a particular connect
 - Use the global shortcut **Ctrl + Alt + T**.
 - Select among network adapters detected by Windows.
 - See the selected adapter's administrative state in the tray menu and icon.
+- Use a custom dark tray popup with vector-drawn icons, clear status, and separate enable/disable actions.
 - Optionally start at Windows sign-in.
 - Remember the selected adapter between launches.
 - No third-party NuGet packages.
