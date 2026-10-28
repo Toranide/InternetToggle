@@ -49,10 +49,12 @@ public partial class Form1 : Form
             Interval = 15_000
         };
 
+        ConfigureTrayMenuAppearance();
         LoadSettings();
 
         notifyIcon1.DoubleClick += async (_, _) => await ToggleSelectedAdapterAsync();
-        toggleMenuItem.Click += async (_, _) => await ToggleSelectedAdapterAsync();
+        enableMenuItem.Click += async (_, _) => await SetSelectedAdapterEnabledAsync(true);
+        disableMenuItem.Click += async (_, _) => await SetSelectedAdapterEnabledAsync(false);
         adaptersMenuItem.DropDownOpening += async (_, _) =>
         {
             await RefreshAdaptersAsync(showErrors: false);
@@ -89,6 +91,104 @@ public partial class Form1 : Form
 
         notifyIcon1.Text = "InternetToggle - Starting";
         UpdatePresentation();
+    }
+
+    private static readonly Color MenuBackground = Color.FromArgb(11, 23, 39);
+    private static readonly Color MenuForeground = Color.FromArgb(232, 242, 255);
+    private static readonly Color MenuMuted = Color.FromArgb(139, 166, 197);
+    private static readonly Color MenuAccent = Color.FromArgb(77, 189, 255);
+    private static readonly Color MenuSuccess = Color.FromArgb(66, 220, 160);
+    private static readonly Color MenuWarning = Color.FromArgb(255, 190, 104);
+    private static readonly Font TrayMenuFont = new("Segoe UI", 9.5F, FontStyle.Regular);
+    private static readonly Font TrayMenuBoldFont = new("Segoe UI", 9.5F, FontStyle.Bold);
+
+    private void ConfigureTrayMenuAppearance()
+    {
+        var renderer = new TrayMenuRenderer();
+
+        contextMenuStrip1.Renderer = renderer;
+        adaptersMenuItem.DropDown.Renderer = renderer;
+        contextMenuStrip1.BackColor = MenuBackground;
+        contextMenuStrip1.ForeColor = MenuForeground;
+        contextMenuStrip1.Padding = new Padding(5);
+        contextMenuStrip1.ShowImageMargin = false;
+        contextMenuStrip1.ShowCheckMargin = true;
+
+        adaptersMenuItem.DropDown.BackColor = MenuBackground;
+        adaptersMenuItem.DropDown.ForeColor = MenuForeground;
+        adaptersMenuItem.DropDown.Padding = new Padding(5);
+        adaptersMenuItem.DropDown.ShowImageMargin = false;
+        adaptersMenuItem.DropDown.ShowCheckMargin = true;
+
+        foreach (ToolStripItem item in contextMenuStrip1.Items)
+        {
+            if (item is ToolStripSeparator separator)
+            {
+                separator.Margin = new Padding(8, 4, 8, 4);
+                separator.Size = new Size(280, 1);
+                continue;
+            }
+
+            StyleMenuItem(item);
+
+            if (item == statusMenuItem)
+            {
+                item.Font = TrayMenuBoldFont;
+                item.Size = new Size(310, 38);
+            }
+        }
+    }
+
+    private static void StyleMenuItem(ToolStripItem item)
+    {
+        item.BackColor = MenuBackground;
+        item.ForeColor = MenuForeground;
+        item.Font = TrayMenuFont;
+        item.Margin = new Padding(2, 1, 2, 1);
+        item.Padding = new Padding(10, 5, 10, 5);
+
+        if (item is ToolStripMenuItem menuItem)
+        {
+            menuItem.AutoSize = false;
+            menuItem.Size = new Size(310, 36);
+        }
+    }
+
+    private sealed class TrayMenuColorTable : ProfessionalColorTable
+    {
+        public override Color ToolStripDropDownBackground => MenuBackground;
+        public override Color MenuBorder => Color.FromArgb(47, 76, 108);
+        public override Color MenuItemBorder => Color.FromArgb(49, 112, 171);
+        public override Color MenuItemSelected => Color.FromArgb(24, 59, 95);
+        public override Color MenuItemSelectedGradientBegin => Color.FromArgb(24, 59, 95);
+        public override Color MenuItemSelectedGradientMiddle => Color.FromArgb(24, 59, 95);
+        public override Color MenuItemSelectedGradientEnd => Color.FromArgb(24, 59, 95);
+        public override Color MenuItemPressedGradientBegin => Color.FromArgb(29, 70, 111);
+        public override Color MenuItemPressedGradientMiddle => Color.FromArgb(29, 70, 111);
+        public override Color MenuItemPressedGradientEnd => Color.FromArgb(29, 70, 111);
+        public override Color ImageMarginGradientBegin => MenuBackground;
+        public override Color ImageMarginGradientMiddle => MenuBackground;
+        public override Color ImageMarginGradientEnd => MenuBackground;
+        public override Color SeparatorDark => Color.FromArgb(43, 66, 90);
+        public override Color SeparatorLight => Color.FromArgb(43, 66, 90);
+        public override Color ToolStripBorder => Color.FromArgb(47, 76, 108);
+        public override Color ToolStripGradientBegin => MenuBackground;
+        public override Color ToolStripGradientMiddle => MenuBackground;
+        public override Color ToolStripGradientEnd => MenuBackground;
+    }
+
+    private sealed class TrayMenuRenderer : ToolStripProfessionalRenderer
+    {
+        public TrayMenuRenderer() : base(new TrayMenuColorTable())
+        {
+            RoundedEdges = true;
+        }
+
+        protected override void OnRenderItemText(ToolStripItemTextRenderEventArgs e)
+        {
+            e.TextColor = e.Item.ForeColor;
+            base.OnRenderItemText(e);
+        }
     }
 
     protected override async void OnLoad(EventArgs e)
@@ -244,6 +344,23 @@ public partial class Form1 : Form
 
     private async Task ToggleSelectedAdapterAsync()
     {
+        NetworkAdapterInfo? adapter = GetSelectedAdapter();
+
+        if (adapter is null)
+        {
+            notifyIcon1.ShowBalloonTip(
+                2500,
+                "InternetToggle",
+                "No network adapter is selected or available. Choose one from the tray menu.",
+                ToolTipIcon.Warning);
+            return;
+        }
+
+        await SetSelectedAdapterEnabledAsync(!adapter.IsEnabled);
+    }
+
+    private async Task SetSelectedAdapterEnabledAsync(bool shouldEnable)
+    {
         if (_isBusy)
         {
             return;
@@ -261,7 +378,16 @@ public partial class Form1 : Form
             return;
         }
 
-        bool shouldEnable = !adapter.IsEnabled;
+        if (adapter.IsEnabled == shouldEnable)
+        {
+            notifyIcon1.ShowBalloonTip(
+                1800,
+                "InternetToggle",
+                $"{adapter.Name} is already {(shouldEnable ? "enabled" : "disabled")}.",
+                ToolTipIcon.Info);
+            return;
+        }
+
         _isBusy = true;
         _refreshTimer.Stop();
         UpdatePresentation();
@@ -371,7 +497,7 @@ public partial class Form1 : Form
             string state = adapter.IsEnabled ? "enabled" : "disabled";
             string adapterName = adapter.Name;
 
-            var item = new ToolStripMenuItem($"{adapter.Name} ({state})")
+            var item = new ToolStripMenuItem($"{adapter.Name}  ·  {state}")
             {
                 Checked = string.Equals(
                     adapterName,
@@ -381,6 +507,8 @@ public partial class Form1 : Form
                 ToolTipText = adapter.Description
             };
 
+            StyleMenuItem(item);
+            item.Size = new Size(295, 36);
             item.Click += (_, _) => SelectAdapter(adapterName);
             adaptersMenuItem.DropDownItems.Add(item);
         }
@@ -486,9 +614,7 @@ public partial class Form1 : Form
 
     private void UpdateStartupMenuText()
     {
-        startupMenuItem.Text = startupMenuItem.Checked
-            ? "Run at Windows sign-in (enabled)"
-            : "Run at Windows sign-in";
+        startupMenuItem.Text = "⚙  Run at Windows sign-in";
     }
 
     private static string GetStartupTaskCommand()
@@ -516,30 +642,46 @@ public partial class Form1 : Form
 
         if (_adapterQueryFailed)
         {
-            statusMenuItem.Text = "Network adapter status: unavailable";
+            statusMenuItem.Text = "●  NETWORK STATUS  ·  UNAVAILABLE";
+            statusMenuItem.ForeColor = MenuWarning;
         }
         else if (_adapters.Count == 0)
         {
-            statusMenuItem.Text = "No network adapters found";
+            statusMenuItem.Text = "●  NO NETWORK ADAPTERS FOUND";
+            statusMenuItem.ForeColor = MenuWarning;
         }
         else if (_selectedAdapterName is null)
         {
-            statusMenuItem.Text = "Choose a network adapter";
+            statusMenuItem.Text = "●  CHOOSE A NETWORK ADAPTER";
+            statusMenuItem.ForeColor = MenuMuted;
         }
         else if (adapter is null)
         {
-            statusMenuItem.Text = $"Adapter unavailable: {_selectedAdapterName}";
+            statusMenuItem.Text = $"●  ADAPTER UNAVAILABLE  ·  {_selectedAdapterName}";
+            statusMenuItem.ForeColor = MenuWarning;
         }
         else
         {
-            statusMenuItem.Text = $"{adapter.Name}: {(adapter.IsEnabled ? "Enabled" : "Disabled")}";
+            statusMenuItem.Text = $"●  {adapter.Name}  ·  {(adapter.IsEnabled ? "ENABLED" : "DISABLED")}";
+            statusMenuItem.ForeColor = adapter.IsEnabled ? MenuSuccess : MenuWarning;
         }
 
-        toggleMenuItem.Text = adapter is null
-            ? "Toggle selected adapter (Ctrl+Alt+T)"
-            : $"{(adapter.IsEnabled ? "Disable" : "Enable")} {adapter.Name} (Ctrl+Alt+T)";
+        enableMenuItem.Text = adapter is null
+            ? "✓  Enable selected adapter"
+            : $"✓  Enable {adapter.Name}";
+        disableMenuItem.Text = adapter is null
+            ? "⊘  Disable selected adapter"
+            : $"⊘  Disable {adapter.Name}";
 
-        toggleMenuItem.Enabled = adapter is not null && !_isBusy;
+        enableMenuItem.ForeColor = MenuSuccess;
+        disableMenuItem.ForeColor = Color.FromArgb(255, 139, 139);
+        enableMenuItem.Enabled = adapter is not null && !adapter.IsEnabled && !_isBusy;
+        disableMenuItem.Enabled = adapter is not null && adapter.IsEnabled && !_isBusy;
+        enableMenuItem.ShortcutKeyDisplayString =
+            adapter is not null && !adapter.IsEnabled ? "Ctrl+Alt+T" : string.Empty;
+        disableMenuItem.ShortcutKeyDisplayString =
+            adapter is not null && adapter.IsEnabled ? "Ctrl+Alt+T" : string.Empty;
+
         adaptersMenuItem.Enabled = !_adapterQueryFailed && _adapters.Count > 0;
         UpdateStartupMenuText();
 
