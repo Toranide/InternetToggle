@@ -1,51 +1,91 @@
-﻿namespace InternetToggle
+namespace InternetToggle
 {
     partial class Form1
     {
         private System.ComponentModel.IContainer components = null;
         private System.Windows.Forms.NotifyIcon notifyIcon1;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem statusMenuItem;
         private System.Windows.Forms.ToolStripMenuItem toggleMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem adaptersMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem startupMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem aboutMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exitMenuItem;
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing && (components != null)) components.Dispose();
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+
             base.Dispose(disposing);
         }
 
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
-            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.toggleMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.exitMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            components = new System.ComponentModel.Container();
+            notifyIcon1 = new System.Windows.Forms.NotifyIcon(components);
+            contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(components);
+            statusMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            toggleMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            adaptersMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            startupMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            aboutMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            exitMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 
-            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { this.toggleMenuItem, this.exitMenuItem });
-            this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 70);
+            contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[]
+            {
+                statusMenuItem,
+                new System.Windows.Forms.ToolStripSeparator(),
+                toggleMenuItem,
+                adaptersMenuItem,
+                startupMenuItem,
+                aboutMenuItem,
+                new System.Windows.Forms.ToolStripSeparator(),
+                exitMenuItem
+            });
+            contextMenuStrip1.Name = "contextMenuStrip1";
+            contextMenuStrip1.ShowImageMargin = false;
+            contextMenuStrip1.Size = new System.Drawing.Size(250, 180);
 
-            this.toggleMenuItem.Name = "toggleMenuItem";
-            this.toggleMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.toggleMenuItem.Text = "Toggle Internet";
+            statusMenuItem.Enabled = false;
+            statusMenuItem.Name = "statusMenuItem";
+            statusMenuItem.Size = new System.Drawing.Size(249, 22);
+            statusMenuItem.Text = "Network adapter status: loading";
 
-            this.exitMenuItem.Name = "exitMenuItem";
-            this.exitMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.exitMenuItem.Text = "Exit";
+            toggleMenuItem.Name = "toggleMenuItem";
+            toggleMenuItem.Size = new System.Drawing.Size(249, 22);
+            toggleMenuItem.Text = "Toggle selected adapter (Ctrl+Alt+T)";
 
-            this.notifyIcon1.ContextMenuStrip = this.contextMenuStrip1;
-            this.notifyIcon1.Icon = System.Drawing.SystemIcons.Application;
-            this.notifyIcon1.Text = "Internet Toggle";
-            this.notifyIcon1.Visible = true;
+            adaptersMenuItem.Name = "adaptersMenuItem";
+            adaptersMenuItem.Size = new System.Drawing.Size(249, 22);
+            adaptersMenuItem.Text = "Select network adapter";
 
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-            this.ClientSize = new System.Drawing.Size(200, 100);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
-            this.Name = "Form1";
-            this.ShowInTaskbar = false;
-            this.Text = "Internet Toggle";
-            this.WindowState = System.Windows.Forms.FormWindowState.Minimized;
+            startupMenuItem.Name = "startupMenuItem";
+            startupMenuItem.Size = new System.Drawing.Size(249, 22);
+            startupMenuItem.Text = "Run at Windows sign-in";
+
+            aboutMenuItem.Name = "aboutMenuItem";
+            aboutMenuItem.Size = new System.Drawing.Size(249, 22);
+            aboutMenuItem.Text = "About InternetToggle";
+
+            exitMenuItem.Name = "exitMenuItem";
+            exitMenuItem.Size = new System.Drawing.Size(249, 22);
+            exitMenuItem.Text = "Exit";
+
+            notifyIcon1.ContextMenuStrip = contextMenuStrip1;
+            notifyIcon1.Icon = System.Drawing.SystemIcons.Application;
+            notifyIcon1.Text = "InternetToggle";
+            notifyIcon1.Visible = true;
+
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+            ClientSize = new System.Drawing.Size(200, 100);
+            FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            Name = "Form1";
+            ShowInTaskbar = false;
+            Text = "InternetToggle";
+            WindowState = System.Windows.Forms.FormWindowState.Minimized;
         }
     }
 }
