@@ -97,6 +97,8 @@ public partial class Form1 : Form
 
     private async Task ShowTrayPopupAsync()
     {
+        Point cursorPosition = Cursor.Position;
+
         if (_showingTrayPopup)
         {
             return;
@@ -151,7 +153,7 @@ public partial class Form1 : Form
                 }
             };
 
-            popup.ShowAt(Cursor.Position);
+            popup.ShowAt(cursorPosition);
         }
         finally
         {
