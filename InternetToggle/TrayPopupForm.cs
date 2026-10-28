@@ -501,18 +501,6 @@ internal sealed class TrayPopupForm : Form
         await action();
     }
 
-    private void ApplyRoundedRegion()
-    {
-        if (ClientSize.Width <= 0 || ClientSize.Height <= 0)
-        {
-            return;
-        }
-
-        using GraphicsPath path = RoundedRectangle(
-            new Rectangle(0, 0, ClientSize.Width, ClientSize.Height), 15);
-        Region = new Region(path);
-    }
-
     internal static GraphicsPath RoundedRectangle(Rectangle bounds, int radius)
     {
         int diameter = radius * 2;
@@ -549,7 +537,7 @@ internal sealed class TrayActionButton : Control
 
     private bool _hovered;
 
-    public string Text { get; set; } = string.Empty;
+    public new string Text { get; set; } = string.Empty;
     public string Subtitle { get; set; } = string.Empty;
     public string Shortcut { get; set; } = string.Empty;
     public TrayActionKind Kind { get; set; }
@@ -635,7 +623,6 @@ internal sealed class TrayActionButton : Control
         int left = Kind == TrayActionKind.Back ? 10 : 44;
         if (Kind == TrayActionKind.Back)
         {
-            DrawText(graphics, "‹", new Rectangle(0, 0, Width, Height), new Font("Segoe UI", 20F), Accent, TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
             return;
         }
 
